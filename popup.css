@@ -1,0 +1,431 @@
+/* ═══════════════════════════════════════════════════
+   Notepad Pro — popup.css
+   ═══════════════════════════════════════════════════ */
+
+/* ── Tokens ────────────────────────────────────── */
+:root {
+  --bg-base:       #f5f4f0;
+  --bg-toolbar:    #eceae4;
+  --bg-tabbar:     #e4e2db;
+  --bg-editor:     #faf9f6;
+  --bg-statusbar:  #eceae4;
+  --bg-panel:      #e4e2db;
+  --bg-modal:      #faf9f6;
+  --bg-tab-active: #faf9f6;
+  --bg-tab-hover:  #dddbd4;
+  --bg-emoji:      #faf9f6;
+
+  --text-primary:  #1a1916;
+  --text-muted:    #7a7870;
+  --text-editor:   #1a1916;
+  --text-tab:      #4a4843;
+
+  --accent:        #c8a96e;
+  --accent-hover:  #b8924d;
+  --danger:        #c85a4a;
+  --danger-hover:  #a33a2a;
+
+  --border:        #d4d2cb;
+  --border-focus:  #c8a96e;
+
+  --radius:        6px;
+  --transition:    150ms ease;
+}
+
+[data-theme="dark"] {
+  --bg-base:       #1a1916;
+  --bg-toolbar:    #111009;
+  --bg-tabbar:     #0e0d0b;
+  --bg-editor:     #1e1c18;
+  --bg-statusbar:  #111009;
+  --bg-panel:      #161410;
+  --bg-modal:      #242118;
+  --bg-tab-active: #1e1c18;
+  --bg-tab-hover:  #2a2823;
+  --bg-emoji:      #242118;
+
+  --text-primary:  #e8e5dc;
+  --text-muted:    #6a6860;
+  --text-editor:   #e2e0d6;
+  --text-tab:      #a0ada4;
+
+  --border:        #2e2c27;
+  --border-focus:  #c8a96e;
+}
+
+/* ── Reset ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* 
+  CRITICAL: body must have exact dimensions so the extension popup
+  doesn't collapse or scroll unexpectedly.
+*/
+html, body {
+  width: 500px;
+  height: 520px;
+  overflow: hidden;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 13px;
+}
+
+/* ── App root — positioning context for overlays ─ */
+#app {
+  position: relative;  /* ← CRITICAL: anchors all absolute children */
+  width: 500px;
+  height: 520px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+/* ── Toolbar ────────────────────────────────────── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--bg-toolbar);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 6px;
+  min-height: 38px;
+}
+.toolbar-left  { display: flex; align-items: center; gap: 6px; }
+.toolbar-right { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
+.app-icon  { font-size: 14px; }
+.app-title { font-size: 13px; font-weight: 700; letter-spacing: 0.03em; white-space: nowrap; }
+
+/* ── Unsaved dot ────────────────────────────────── */
+.unsaved-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 1.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(200,169,110,0.7); }
+  50%      { box-shadow: 0 0 0 4px rgba(200,169,110,0); }
+}
+
+/* ── Buttons ────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition), border-color var(--transition);
+  user-select: none;
+}
+.btn:hover { background: var(--bg-tab-hover); border-color: var(--border-focus); }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #1a1916;
+  font-weight: 700;
+}
+.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+.btn-icon {
+  padding: 4px 5px;
+  font-size: 14px;
+  border: none;
+  background: transparent;
+  line-height: 1;
+}
+.btn-icon:hover { background: var(--bg-tab-hover); }
+
+.btn-danger       { color: var(--danger); }
+.btn-danger:hover { background: rgba(200,90,74,0.12); border-color: var(--danger); }
+
+.btn-danger-solid {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+  font-weight: 600;
+}
+.btn-danger-solid:hover { background: var(--danger-hover); border-color: var(--danger-hover); }
+
+/* ── Utility ────────────────────────────────────── */
+.hidden { display: none !important; }
+
+/* ── Controls panel ─────────────────────────────── */
+.controls-panel {
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.control-row label {
+  width: 70px;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+.control-row input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent);
+  cursor: pointer;
+  height: 4px;
+}
+.control-row input[type="color"] {
+  width: 28px; height: 24px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 1px;
+  background: transparent;
+}
+.control-row span {
+  min-width: 40px;
+  text-align: right;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── Tab bar ────────────────────────────────────── */
+.tab-bar {
+  display: flex;
+  align-items: stretch;
+  background: var(--bg-tabbar);
+  border-bottom: 1px solid var(--border);
+  min-height: 30px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px;
+  min-height: 30px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-tab);
+  white-space: nowrap;
+  border-right: 1px solid var(--border);
+  user-select: none;
+  flex-shrink: 0;
+  position: relative;
+  transition: background var(--transition);
+}
+.tab:hover { background: var(--bg-tab-hover); }
+.tab.active {
+  background: var(--bg-tab-active);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.tab.active::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+
+.tab-label { max-width: 80px; overflow: hidden; text-overflow: ellipsis; }
+
+.tab-close {
+  width: 14px; height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 9px;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition), color var(--transition);
+}
+.tab-close:hover { background: rgba(200,90,74,0.2); color: var(--danger); }
+
+.tab-add-btn {
+  padding: 0 12px;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: color var(--transition);
+  align-self: center;
+}
+.tab-add-btn:hover { color: var(--accent); }
+
+/* ── Editor wrapper ─────────────────────────────── */
+.editor-wrapper {
+  position: relative;   /* anchors the emoji button */
+  flex: 1;
+  display: flex;
+  min-height: 0;        /* CRITICAL: allows flex child to shrink */
+}
+
+.editor {
+  width: 100%;
+  height: 100%;
+  padding: 12px 14px;
+  background: var(--bg-editor);
+  color: var(--text-editor);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  line-height: 1.65;
+  border: none;
+  outline: none;
+  resize: none;         /* we manage sizing via flex */
+  overflow-y: auto;
+  transition: background var(--transition), color var(--transition);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.editor::placeholder { color: var(--text-muted); opacity: 0.55; }
+.editor:focus { box-shadow: inset 0 0 0 1.5px var(--border-focus); }
+
+/* ── Emoji trigger — anchored inside editor-wrapper ─ */
+.btn-emoji-trigger {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-editor);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  transition: transform var(--transition);
+  z-index: 10;
+  line-height: 1;
+}
+.btn-emoji-trigger:hover { transform: scale(1.15); }
+
+/* ── Status bar ─────────────────────────────────── */
+.statusbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 12px;
+  background: var(--bg-statusbar);
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  min-height: 22px;
+}
+.sep { opacity: 0.35; }
+#save-status.saved   { color: #5a9a5a; }
+#save-status.unsaved { color: var(--accent); }
+
+/* ── Emoji panel — anchored to #app ─────────────── */
+.emoji-panel {
+  position: absolute;
+  bottom: 22px;        /* above status bar */
+  right: 8px;
+  width: 268px;
+  background: var(--bg-emoji);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  z-index: 100;
+  overflow: hidden;
+}
+.emoji-search-row { padding: 7px 8px; border-bottom: 1px solid var(--border); }
+.emoji-search-row input {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-editor);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+}
+.emoji-search-row input:focus { border-color: var(--border-focus); }
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 1px;
+  padding: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.emoji-btn {
+  font-size: 17px;
+  padding: 3px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: background var(--transition), transform var(--transition);
+  line-height: 1.2;
+}
+.emoji-btn:hover { background: var(--bg-tab-hover); transform: scale(1.2); }
+
+/* ── Modal backdrop — covers #app ───────────────── */
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+.modal {
+  background: var(--bg-modal);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px 24px 18px;
+  min-width: 230px;
+  max-width: 320px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+.modal-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.modal-body  { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+.modal input[type="text"] {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-editor);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  margin-bottom: 14px;
+  display: block;
+}
+.modal input[type="text"]:focus { border-color: var(--border-focus); }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
