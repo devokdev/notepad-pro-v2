@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <title>Notepad Pro</title>
-  <link rel="stylesheet" href="popup.css"/>
+  <link rel="stylesheet" href="popup.css" />
 </head>
+
 <body>
 
   <!-- Root wrapper — gives absolute children a proper containing block -->
@@ -18,11 +20,11 @@
       </div>
       <div class="toolbar-right">
         <span id="unsaved-dot" class="unsaved-dot" title="Unsaved changes" hidden></span>
-        <button id="btn-save"         class="btn btn-primary"  title="Save (Ctrl+S)">💾 Save</button>
-        <button id="btn-theme"        class="btn btn-icon"     title="Toggle theme">🌙</button>
-        <button id="btn-opacity-toggle" class="btn btn-icon"   title="Opacity">🔆</button>
-        <button id="btn-color-toggle" class="btn btn-icon"     title="Text colour">🎨</button>
-        <button id="btn-clear"        class="btn btn-icon btn-danger" title="Clear note">🗑️</button>
+        <button id="btn-save" class="btn btn-primary" title="Save (Ctrl+S)">Save</button>
+        <button id="btn-theme" class="btn btn-icon" title="Toggle theme">◐</button>
+        <button id="btn-opacity-toggle" class="btn btn-icon" title="Opacity">◌</button>
+        <button id="btn-color-toggle" class="btn btn-icon" title="Text colour">֎</button>
+        <button id="btn-clear" class="btn btn-icon btn-danger" title="Clear note">✄</button>
       </div>
     </header>
 
@@ -30,12 +32,12 @@
     <div id="controls-panel" class="controls-panel hidden">
       <div class="control-row" id="opacity-row">
         <label for="slider-opacity">Opacity</label>
-        <input type="range" id="slider-opacity" min="20" max="100" step="1" value="100"/>
+        <input type="range" id="slider-opacity" min="20" max="100" step="1" value="100" />
         <span id="opacity-value">100%</span>
       </div>
       <div class="control-row hidden" id="color-row">
         <label for="input-color">Text colour</label>
-        <input type="color" id="input-color" value="#e2e0d6"/>
+        <input type="color" id="input-color" value="#e2e0d6" />
         <span id="color-label">Default</span>
       </div>
     </div>
@@ -61,7 +63,7 @@
     <!-- ── EMOJI PANEL ───────────────────────────── -->
     <div id="emoji-panel" class="emoji-panel hidden">
       <div class="emoji-search-row">
-        <input type="text" id="emoji-search" placeholder="Search…" autocomplete="off"/>
+        <input type="text" id="emoji-search" placeholder="Search…" autocomplete="off" />
       </div>
       <div id="emoji-grid" class="emoji-grid"></div>
     </div>
@@ -70,9 +72,9 @@
     <div id="rename-modal" class="modal-backdrop hidden">
       <div class="modal">
         <p class="modal-title">Rename tab</p>
-        <input type="text" id="rename-input" maxlength="20"/>
+        <input type="text" id="rename-input" maxlength="20" />
         <div class="modal-actions">
-          <button id="rename-ok"     class="btn btn-primary">OK</button>
+          <button id="rename-ok" class="btn btn-primary">OK</button>
           <button id="rename-cancel" class="btn">Cancel</button>
         </div>
       </div>
@@ -84,7 +86,7 @@
         <p class="modal-title">Clear this note?</p>
         <p class="modal-body">This cannot be undone.</p>
         <div class="modal-actions">
-          <button id="clear-ok"     class="btn btn-danger-solid">Clear</button>
+          <button id="clear-ok" class="btn btn-danger-solid">Clear</button>
           <button id="clear-cancel" class="btn">Cancel</button>
         </div>
       </div>
@@ -94,4 +96,5 @@
 
   <script src="popup.js"></script>
 </body>
+
 </html>

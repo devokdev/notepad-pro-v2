@@ -16,39 +16,39 @@
 
 /* ── Constants ──────────────────────────────────── */
 const SK = {
-  TABS:       "np_tabs",
-  ACTIVE:     "np_activeTabId",
-  THEME:      "np_theme",
-  OPACITY:    "np_opacity",
-  COLOR:      "np_textColor",
+  TABS: "np_tabs",
+  ACTIVE: "np_activeTabId",
+  THEME: "np_theme",
+  OPACITY: "np_opacity",
+  COLOR: "np_textColor",
 };
 
 const AUTOSAVE_MS = 700;
 
 const EMOJIS = [
-  "😀","😂","😊","😍","🥰","😎","🤔","😅","😭","🙏",
-  "👍","👎","❤️","💔","🔥","⚡","✨","🎉","🎊","🎈",
-  "📝","📌","📎","💡","🔑","🏆","⭐","🌟","💫","🚀",
-  "💻","📱","🖥️","⌨️","📷","🎵","🎶","🎸","🎹","🥁",
-  "🍕","🍔","🍣","☕","🍺","🥂","🎂","🍰","🍩","🍫",
-  "🌍","🌈","☀️","🌙","⛅","❄️","🌊","🏔️","🌺","🌸",
-  "😴","🤯","😤","🥳","🤩","👻","💀","🤖","👾","🎃",
-  "🐶","🐱","🦊","🐻","🐼","🦁","🐸","🦋","🌻","🌴",
-  "✅","❌","⚠️","ℹ️","🔴","🟡","🟢","🔵","⬛","⬜",
-  "👋","✌️","👏","💪","🤝","🫡","🫶","👌","🤌","☝️",
+  "😀", "😂", "😊", "😍", "🥰", "😎", "🤔", "😅", "😭", "🙏",
+  "👍", "👎", "❤️", "💔", "🔥", "⚡", "✨", "🎉", "🎊", "🎈",
+  "📝", "📌", "📎", "💡", "🔑", "🏆", "⭐", "🌟", "💫", "🚀",
+  "💻", "📱", "🖥️", "⌨️", "📷", "🎵", "🎶", "🎸", "🎹", "🥁",
+  "🍕", "🍔", "🍣", "☕", "🍺", "🥂", "🎂", "🍰", "🍩", "🍫",
+  "🌍", "🌈", "☀️", "🌙", "⛅", "❄️", "🌊", "🏔️", "🌺", "🌸",
+  "😴", "🤯", "😤", "🥳", "🤩", "👻", "💀", "🤖", "👾", "🎃",
+  "🐶", "🐱", "🦊", "🐻", "🐼", "🦁", "🐸", "🦋", "🌻", "🌴",
+  "✅", "❌", "⚠️", "ℹ️", "🔴", "🟡", "🟢", "🔵", "⬛", "⬜",
+  "👋", "✌️", "👏", "💪", "🤝", "🫡", "🫶", "👌", "🤌", "☝️",
 ];
 
 /* ── State ──────────────────────────────────────── */
 let state = {
-  tabs:       [],
+  tabs: [],
   activeTabId: null,
-  theme:      "dark",
-  opacity:    100,
-  textColor:  "",
+  theme: "dark",
+  opacity: 100,
+  textColor: "",
 };
 
-let isDirty      = false;
-let saveTimer    = null;
+let isDirty = false;
+let saveTimer = null;
 let renameTarget = null;
 
 /* ── DOM cache ──────────────────────────────────── */
@@ -56,17 +56,17 @@ const el = {};
 
 function cacheEl() {
   const ids = [
-    "app","editor","tab-bar","btn-add-tab","btn-save","btn-theme",
-    "btn-clear","btn-opacity-toggle","btn-color-toggle",
-    "controls-panel","opacity-row","color-row",
-    "slider-opacity","opacity-value","input-color","color-label",
-    "char-count","save-status","unsaved-dot",
-    "btn-emoji","emoji-panel","emoji-search","emoji-grid",
-    "rename-modal","rename-input","rename-ok","rename-cancel",
-    "clear-modal","clear-ok","clear-cancel",
+    "app", "editor", "tab-bar", "btn-add-tab", "btn-save", "btn-theme",
+    "btn-clear", "btn-opacity-toggle", "btn-color-toggle",
+    "controls-panel", "opacity-row", "color-row",
+    "slider-opacity", "opacity-value", "input-color", "color-label",
+    "char-count", "save-status", "unsaved-dot",
+    "btn-emoji", "emoji-panel", "emoji-search", "emoji-grid",
+    "rename-modal", "rename-input", "rename-ok", "rename-cancel",
+    "clear-modal", "clear-ok", "clear-cancel",
   ];
   ids.forEach(id => {
-    const key = id.replace(/-([a-z])/g, (_,c) => c.toUpperCase()); // camelCase
+    const key = id.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); // camelCase
     el[key] = document.getElementById(id);
     if (!el[key]) console.warn("Missing element:", id);
   });
@@ -79,11 +79,11 @@ function loadAll() {
       const tabs = raw[SK.TABS];
       const seed = makeTab("Note 1");
       resolve({
-        tabs:       Array.isArray(tabs) && tabs.length ? tabs : [seed],
-        activeTabId: raw[SK.ACTIVE]  || null,
-        theme:      raw[SK.THEME]    || "dark",
-        opacity:    raw[SK.OPACITY]  ?? 100,
-        textColor:  raw[SK.COLOR]    || "",
+        tabs: Array.isArray(tabs) && tabs.length ? tabs : [seed],
+        activeTabId: raw[SK.ACTIVE] || null,
+        theme: raw[SK.THEME] || "dark",
+        opacity: raw[SK.OPACITY] ?? 100,
+        textColor: raw[SK.COLOR] || "",
       });
     });
   });
@@ -91,7 +91,7 @@ function loadAll() {
 
 function saveTabs() {
   chrome.storage.local.set({
-    [SK.TABS]:   state.tabs,
+    [SK.TABS]: state.tabs,
     [SK.ACTIVE]: state.activeTabId,
   });
 }
@@ -129,18 +129,18 @@ function renderTabs() {
     div.dataset.id = tab.id;
 
     const lbl = document.createElement("span");
-    lbl.className   = "tab-label";
+    lbl.className = "tab-label";
     lbl.textContent = tab.label;
-    lbl.title       = tab.label;
+    lbl.title = tab.label;
     lbl.addEventListener("dblclick", e => {
       e.stopPropagation();
       showRenameModal(tab.id, tab.label);
     });
 
     const cls = document.createElement("span");
-    cls.className   = "tab-close";
+    cls.className = "tab-close";
     cls.textContent = "✕";
-    cls.title       = "Close";
+    cls.title = "Close";
     cls.addEventListener("click", e => {
       e.stopPropagation();
       removeTab(tab.id);
@@ -168,7 +168,7 @@ function switchTab(id) {
 
 function addTab() {
   flushEditor();
-  const t = makeTab("Note " + (state.tabs.length + 1));
+  const t = makeTab("Note ");
   state.tabs.push(t);
   state.activeTabId = t.id;
   el.editor.value = "";
@@ -186,7 +186,7 @@ function removeTab(id) {
   if (state.activeTabId === id) {
     const next = state.tabs[Math.min(idx, state.tabs.length - 1)];
     state.activeTabId = next.id;
-    el.editor.value   = next.content;
+    el.editor.value = next.content;
     updateCount();
     setClean();
   }
@@ -223,60 +223,60 @@ function doSave(manual) {
 function setDirty() {
   if (isDirty) return;
   isDirty = true;
-  el.unsavedDot.hidden      = false;
+  el.unsavedDot.hidden = false;
   el.saveStatus.textContent = "Unsaved…";
-  el.saveStatus.className   = "unsaved";
+  el.saveStatus.className = "unsaved";
 }
 
 function setClean() {
   isDirty = false;
-  el.unsavedDot.hidden      = true;
+  el.unsavedDot.hidden = true;
   el.saveStatus.textContent = "All saved";
-  el.saveStatus.className   = "saved";
+  el.saveStatus.className = "saved";
 }
 
 /* ── Theme ──────────────────────────────────────── */
 function applyTheme(t) {
   state.theme = t;
   document.documentElement.dataset.theme = t;
-  el.btnTheme.textContent = t === "dark" ? "☀️" : "🌙";
-  el.btnTheme.title       = t === "dark" ? "Light mode" : "Dark mode";
+  el.btnTheme.textContent = t === "dark" ? "☼" : "☼";
+  el.btnTheme.title = t === "dark" ? "Light mode" : "Dark mode";
   savePref(SK.THEME, t);
 }
 function toggleTheme() { applyTheme(state.theme === "dark" ? "light" : "dark"); }
 
 /* ── Opacity ────────────────────────────────────── */
 function applyOpacity(v) {
-  state.opacity             = v;
-  el.editor.style.opacity   = v / 100;
-  el.sliderOpacity.value    = v;
+  state.opacity = v;
+  el.editor.style.opacity = v / 100;
+  el.sliderOpacity.value = v;
   el.opacityValue.textContent = v + "%";
   savePref(SK.OPACITY, v);
 }
 
 /* ── Text colour ────────────────────────────────── */
 function applyColor(hex) {
-  state.textColor         = hex;
-  el.editor.style.color   = hex || "";
-  el.inputColor.value     = hex || "#e2e0d6";
+  state.textColor = hex;
+  el.editor.style.color = hex || "";
+  el.inputColor.value = hex || "#e2e0d6";
   el.colorLabel.textContent = hex || "Default";
   savePref(SK.COLOR, hex);
 }
 
 /* ── Controls panel: toggle rows ────────────────── */
 let showOpacity = false;
-let showColor   = false;
+let showColor = false;
 
 function toggleOpacityRow() {
   showOpacity = !showOpacity;
-  showColor   = false;
+  showColor = false;
   el.opacityRow.classList.toggle("hidden", !showOpacity);
   el.colorRow.classList.add("hidden");
   el.controlsPanel.classList.toggle("hidden", !showOpacity && !showColor);
 }
 
 function toggleColorRow() {
-  showColor   = !showColor;
+  showColor = !showColor;
   showOpacity = false;
   el.colorRow.classList.toggle("hidden", !showColor);
   el.opacityRow.classList.add("hidden");
@@ -308,7 +308,7 @@ function buildEmojiGrid(filter) {
   const frag = document.createDocumentFragment();
   list.forEach(em => {
     const b = document.createElement("button");
-    b.className   = "emoji-btn";
+    b.className = "emoji-btn";
     b.textContent = em;
     b.addEventListener("click", () => insertEmoji(em));
     frag.appendChild(b);
@@ -318,8 +318,8 @@ function buildEmojiGrid(filter) {
 
 function insertEmoji(em) {
   const ta = el.editor;
-  const s  = ta.selectionStart;
-  const e  = ta.selectionEnd;
+  const s = ta.selectionStart;
+  const e = ta.selectionEnd;
   ta.value = ta.value.slice(0, s) + em + ta.value.slice(e);
   ta.setSelectionRange(s + em.length, s + em.length);
   ta.focus();
@@ -337,14 +337,14 @@ function toggleEmoji() {
 
 /* ── Rename modal ───────────────────────────────── */
 function showRenameModal(id, label) {
-  renameTarget           = id;
-  el.renameInput.value   = label;
+  renameTarget = id;
+  el.renameInput.value = label;
   el.renameModal.classList.remove("hidden");
   el.renameInput.focus();
   el.renameInput.select();
 }
 function hideRenameModal() { el.renameModal.classList.add("hidden"); renameTarget = null; }
-function confirmRename()   { if (renameTarget) { renameTab(renameTarget, el.renameInput.value); } hideRenameModal(); }
+function confirmRename() { if (renameTarget) { renameTab(renameTarget, el.renameInput.value); } hideRenameModal(); }
 
 /* ── Clear modal ────────────────────────────────── */
 function showClearModal() { el.clearModal.classList.remove("hidden"); }
@@ -380,7 +380,7 @@ function wire() {
   el.renameOk.addEventListener("click", confirmRename);
   el.renameCancel.addEventListener("click", hideRenameModal);
   el.renameInput.addEventListener("keydown", e => {
-    if (e.key === "Enter")  confirmRename();
+    if (e.key === "Enter") confirmRename();
     if (e.key === "Escape") hideRenameModal();
   });
 
@@ -391,8 +391,8 @@ function wire() {
   // Click outside emoji panel to close
   document.addEventListener("click", e => {
     if (!el.emojiPanel.classList.contains("hidden") &&
-        !el.emojiPanel.contains(e.target) &&
-        e.target !== el.btnEmoji) {
+      !el.emojiPanel.contains(e.target) &&
+      e.target !== el.btnEmoji) {
       el.emojiPanel.classList.add("hidden");
     }
   });
@@ -401,8 +401,8 @@ function wire() {
   document.addEventListener("keydown", e => {
     if (e.key !== "Escape") return;
     if (!el.renameModal.classList.contains("hidden")) hideRenameModal();
-    if (!el.clearModal.classList.contains("hidden"))  hideClearModal();
-    if (!el.emojiPanel.classList.contains("hidden"))  el.emojiPanel.classList.add("hidden");
+    if (!el.clearModal.classList.contains("hidden")) hideClearModal();
+    if (!el.emojiPanel.classList.contains("hidden")) el.emojiPanel.classList.add("hidden");
   });
 }
 
